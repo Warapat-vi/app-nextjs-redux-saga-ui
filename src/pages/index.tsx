@@ -1,10 +1,14 @@
 import { useRouter } from 'next/router';
 import { Nav, Container, Row } from 'react-bootstrap';
+import { connect } from "react-redux";
+import {AuthState} from '../store/rootReducer'
 
+const mapStateToProps = (state:AuthState) => ({
+  auth: state.auth
+})
 
-export default function Home() {
+const Home = (props: any) => {
   const router = useRouter();
-
   return (
     <Container>
       <Row>
@@ -18,8 +22,10 @@ export default function Home() {
         </Nav>
       </Row>
       <Row>
-        <h1>Hello World!</h1>
+        <h1>{props.auth.token}</h1>
       </Row>
     </Container>
   )
 }
+
+export default connect(mapStateToProps, null)(Home);

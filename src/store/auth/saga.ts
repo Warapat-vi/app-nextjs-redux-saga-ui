@@ -1,5 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeLatest } from "redux-saga/effects";
+import AuthService from "@/service/AuthService";
 
 import {
     loginFailure,
@@ -9,20 +10,6 @@ import {
 } from "./actions";
 import { LOGIN_REQUEST, SIGNUP_REQUEST } from "./actionTypes";
 import { IAuth } from "./types";
-
-const login = async (payload: { email: string; password: string }) => {
-    const { data } = await axios.post<IAuth>(
-        "http://localhost:3000/api/login",
-        { email: payload.email, password: payload.password },
-        {
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-        }
-    );
-    return data;
-};
 
 const signup = async (payload: { email: string; password: string }) => {
     const { data } = await axios.post<IAuth>(
@@ -42,21 +29,22 @@ const signup = async (payload: { email: string; password: string }) => {
 
 function* loginSaga(action: any) {
     try {
-        const response: { token: string } = yield call(login, {
+        const response: { data: { token: string; messages: string }; status: number } = yield call(AuthService.login, {
             email: action.payload.values.email,
             password: action.payload.values.password,
         });
 
         yield put(
             loginSuccess({
-                token: response.token,
+                token: response.data.token,
             })
         );
-        action.payload.callback(response.token);
+        action.payload.callback.suscess(response.data.token);
+
     } catch (e: any) {
         yield put(
             loginFailure({
-                error: e.message,
+                error: e.response.data.message,
             })
         );
     }

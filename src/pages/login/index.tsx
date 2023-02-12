@@ -1,8 +1,13 @@
-import React, { useRef, useState } from "react";
-import { Button, Container, Row, Col, Form, FormCheck, ButtonGroup, Modal} from 'react-bootstrap';
+import { useRef, useState } from "react";
+import { Button, Container, Row, Col, Form, FormCheck, ButtonGroup, Modal } from 'react-bootstrap';
 import { loginRequest } from "../../store/auth/actions";
 import { connect } from "react-redux";
 import { useRouter } from 'next/router'
+import {AuthState} from '../../store/rootReducer'
+
+const mapStateToProps = (state:AuthState) => ({
+  auth: state.auth
+})
 
 const mapDispatchToProps = (dispatch: any) => ({
     login: (params: any) => dispatch(loginRequest(params)),
@@ -20,18 +25,21 @@ const Login = (props: any) => {
         setShowModel(false)
     };
 
-    const callback = (data: any) => {
+    const loginSuscess = (data: any) => {
         console.log("Inside callback after login");
         setShowModel(true)
     };
-    
+
+
     const login = () => {
         let data: any = {
             values: {
                 email: emailRef.current?.value,
                 password: passwordRef.current?.value,
             },
-            callback,
+            callback: {
+                suscess: loginSuscess
+            },
         };
         props.login(data);
     };
@@ -48,7 +56,7 @@ const Login = (props: any) => {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={2}>Password</Form.Label>
                     <Col sm={10}>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Control type="password" placeholder="Password" ref={passwordRef} />
                     </Col>
                 </Form.Group>
                 <FormCheck>
@@ -57,29 +65,37 @@ const Login = (props: any) => {
 
                 </FormCheck>
                 <ButtonGroup className="mb-3">
-                    <Button variant="primary" 
-                    onClick={() => {
-                        login();
-                    }}>Sign in</Button>
+                    <Button variant="primary"
+                        onClick={() => {
+                            login();
+                        }}>Sign in</Button>
                     <Button
-                            variant="primary"
-                            onClick={() => { router.push('/', undefined, { shallow: true }) }}
-                        >Go To Index</Button>
+                        variant="primary"
+                        onClick={() => { router.push('/', undefined, { shallow: true }) }}
+                    >Go To Index</Button>
                 </ButtonGroup>
             </Form>
             <Modal show={showModel} onHide={handleCloseModel}>
                 <Modal.Header closeButton>
-                <Modal.Title>Suscess</Modal.Title>
+                    <Modal.Title>Suscess</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>Sign in suscess!!</Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseModel}>
-                    OK
-                </Button>
+                    <Button variant="secondary" onClick={handleCloseModel}>
+                        OK
+                    </Button>
                 </Modal.Footer>
             </Modal>
+            <Row className="mb-3">
+                <Col>
+                Error: 
+                </Col>
+                <Col>
+                {props.auth.error}
+                </Col>
+            </Row>
         </Container>
     )
 }
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -19,7 +19,9 @@ export interface AuthState {
 
 export interface LoginPayload {
     values: { email: string, password: string };
-    callback: any;
+    callback: {
+        suscess: any;
+    };
 }
 
 export interface LoginSuccessPayload {
