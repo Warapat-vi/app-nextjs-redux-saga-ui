@@ -13,6 +13,7 @@ const initialState: AuthState = {
     pending: false,
     token: "",
     error: null,
+    user: null
 };
 
 const reducers = (state = initialState, action: AuthActions) => {
@@ -48,6 +49,7 @@ const reducers = (state = initialState, action: AuthActions) => {
                 ...state,
                 pending: false,
                 token: action.payload.token,
+                user: action.payload.user,
                 error: null,
             };
         case LOGIN_FAILURE:

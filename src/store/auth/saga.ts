@@ -26,10 +26,20 @@ const signup = async (payload: { email: string; password: string }) => {
     return data;
 };
 
-
 function* loginSaga(action: any) {
     try {
-        const response: { data: { token: string; messages: string }; status: number } = yield call(AuthService.login, {
+        const response: { 
+            data: { 
+                token: string; 
+                messages: string ;
+                user : { 
+                    name: string; 
+                    role: string;
+                }  ; 
+            }; 
+            status: number; 
+             
+        } = yield call(AuthService.login, {
             email: action.payload.values.email,
             password: action.payload.values.password,
         });
@@ -37,6 +47,7 @@ function* loginSaga(action: any) {
         yield put(
             loginSuccess({
                 token: response.data.token,
+                user: response.data.user
             })
         );
         action.payload.callback.suscess(response.data.token);

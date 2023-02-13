@@ -15,6 +15,7 @@ export interface AuthState {
     pending: boolean;
     token: string;
     error: string | null;
+    user: User | null;
 }
 
 export interface LoginPayload {
@@ -23,9 +24,13 @@ export interface LoginPayload {
         suscess: any;
     };
 }
-
+export interface User {
+    name: string;
+    role: string;
+}
 export interface LoginSuccessPayload {
     token: string;
+    user: User;
 }
 
 export interface LoginFailurePayload {
